@@ -10,16 +10,16 @@ xuml makes existing and AI-generated code easier to inspect. It extracts source 
 - [Architecture diagram (SVG)](docs/diagram/architecture.svg)
 - [Architecture source (Mermaid)](docs/diagram/architecture.mmd)
 - [Architecture source (PlantUML)](docs/diagram/architecture.puml)
-- [ADR-0001: local-first hybrid architecture](docs/adr/0001-architecture.md)
 
-## Development is Issue-first
+## Issues are canonical
 
-Detailed requirements, design decisions, acceptance criteria, implementation plans, open questions, and verification results belong in GitHub Issues—not duplicated long-form documents under `docs/`.
+All detailed requirements, design decisions, ADRs, acceptance criteria, implementation plans, open questions, and verification results live in GitHub Issues. Do not maintain standalone documentation or ADR files in the repository.
 
 - [Issue #1 — Local-first analysis CLI](https://github.com/bonsai/xuml/issues/1)
-- [Issue #2 — Minimal docs and documentation portal](https://github.com/bonsai/xuml/issues/2)
+- [Issue #2 — Minimal docs policy](https://github.com/bonsai/xuml/issues/2)
 - [Issue #3 — Intent-to-SVG MCP/API/server](https://github.com/bonsai/xuml/issues/3)
 - [Issue #4 — Architecture decisions and open questions](https://github.com/bonsai/xuml/issues/4)
+- [ADR-0001 — Accepted local-first hybrid architecture](https://github.com/bonsai/xuml/issues/5)
 
 ## Architecture in brief
 
@@ -27,11 +27,12 @@ Source adapters → parser/analyzer → semantic IR → validators → render pl
 
 The semantic model is canonical. AST, graph, and layout are derived projections; layout changes must not change model meaning. Keep confirmed static facts, inferred relations, runtime observations, and unknowns distinct.
 
-## Repository conventions
+## Repository policy
 
-- Keep `docs/` limited to the portal, concise overview, stable ADRs, and diagrams.
-- Store diagram source and rendered output together in `docs/diagram/` (`.puml`, `.mmd`, `.svg`).
-- Pages workflow source: `wf/dep-pages.yml`; GitHub Actions entry point: `.github/workflows/dep-pages.yml`.
+- Keep docs limited to index.html and diagrams under docs/diagram/.
+- Keep diagram sources and rendered output together (.puml, .mmd, .svg).
+- Put all specifications, ADRs, design discussions, acceptance criteria, and progress in tagged GitHub Issues.
+- Pages workflow source: wf/dep-pages.yml; GitHub Actions entry point: .github/workflows/dep-pages.yml.
 - JSON for versioned contracts and IR; YAML for configuration/templates; JSONL for append-only event history.
 - Local SQLite first; PostgreSQL and object storage are optional later server components.
 - Serious CI errors block merge; waivers require a reason, approver, expiry, linked Issue, and rule ID.
