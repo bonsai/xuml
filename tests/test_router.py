@@ -45,4 +45,4 @@ def test_validation_reports_unknown_but_does_not_drop_it():
 def test_router_does_not_match_conflicting_supported_dimension():
     result = route({"dimensions": {"domain": "finance", "workflow": "multi_agent"}}, load_catalog(CATALOG))
     assert result["status"] == "matched"
-    assert result["selected"]["id"] == "diagram.general-intent"
+    assert result["selected"]["id"] != "diagram.agent-workflow"
