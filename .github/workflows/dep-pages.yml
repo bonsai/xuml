@@ -6,7 +6,6 @@ on:
     paths:
       - "docs/**"
       - "README.md"
-      - "wf/dep-pages.yml"
       - ".github/workflows/dep-pages.yml"
   workflow_dispatch:
 

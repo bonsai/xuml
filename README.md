@@ -32,7 +32,7 @@ The semantic model is canonical. AST, graph, and layout are derived projections;
 - Keep docs limited to index.html and diagrams under docs/diagram/.
 - Keep diagram sources and rendered output together (.puml, .mmd, .svg).
 - Put all specifications, ADRs, design discussions, acceptance criteria, and progress in tagged GitHub Issues.
-- Pages workflow source: wf/dep-pages.yml; GitHub Actions entry point: .github/workflows/dep-pages.yml.
+- Pages deployment entry point: .github/workflows/dep-pages.yml.
 - JSON for versioned contracts and IR; YAML for configuration/templates; JSONL for append-only event history.
 - Local SQLite first; PostgreSQL and object storage are optional later server components.
 - Serious CI errors block merge; waivers require a reason, approver, expiry, linked Issue, and rule ID.
