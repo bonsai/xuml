@@ -1,0 +1,62 @@
+version: 1
+catalog_id: xuml.core
+description: Small deterministic starter catalog; entries are composable assets, not an exhaustive taxonomy.
+entries:
+  - id: diagram.system-overview
+    kind: diagram
+    title: System overview
+    output_format: svg
+    supports:
+      use_case: [overview, explain]
+      granularity: [system, subsystem]
+      diagram_type: [architecture, component, flowchart]
+      output_format: [svg]
+      perspective: [human, agent]
+    template: system-overview
+    assumptions:
+      - Relationships not supplied by the caller are not invented.
+
+  - id: diagram.agent-workflow
+    kind: diagram
+    title: Agent workflow
+    output_format: svg
+    supports:
+      domain: [ai, software]
+      use_case: [workflow, orchestrate, explain]
+      granularity: [system, agent, operation]
+      layer: [application, orchestration]
+      workflow: [sequential, conditional, multi_agent, human_in_the_loop]
+      diagram_type: [flowchart, sequence]
+      output_format: [svg]
+      perspective: [human, agent]
+    template: agent-workflow
+    assumptions:
+      - Workflow steps require explicit intent or source evidence.
+
+  - id: diagram.network-topology
+    kind: diagram
+    title: Network topology
+    output_format: svg
+    supports:
+      use_case: [network, deploy, inspect]
+      granularity: [system, subsystem, component]
+      network: [client_server, peer_to_peer, hub_spoke, mesh]
+      layer: [network, infrastructure, application]
+      diagram_type: [architecture, network]
+      output_format: [svg]
+      perspective: [human, operator, agent]
+    template: network-topology
+    assumptions:
+      - The topology label is a requested view, not proof of live connectivity.
+
+  - id: diagram.general-intent
+    kind: diagram
+    title: General intent view
+    output_format: svg
+    supports:
+      diagram_type: ["*"]
+      output_format: [svg]
+      perspective: [human, agent, operator, developer]
+    template: general-intent
+    assumptions:
+      - This is a fallback view; unsupported dimensions remain visible as warnings.
