@@ -1,0 +1,48 @@
+@startuml
+title xuml — Local-first hybrid architecture
+left to right direction
+skinparam componentStyle rectangle
+
+package "Analysis core" {
+  [Source adapters\nPython / xuml DSL / YAML] as Source
+  [Parse and analyze\nAST / types / provenance] as Analyze
+  component "Semantic common IR\nIDs / relations / confidence" as IR
+  [Validators\nstructure / topology / contracts] as Validate
+  [Render plugins] as Render
+  [JSON diagnostics\nstable exit codes] as Diagnostics
+  Source --> Analyze
+  Analyze --> IR
+  IR --> Validate
+  IR --> Render
+  Validate --> Diagnostics
+  Render --> [SVG]
+  Render --> [Mermaid]
+  Render --> [PlantUML]
+}
+package "Local-first runtime" {
+  [CLI]
+  [JSONL events]
+  database "SQLite index/cache" as SQLite
+}
+IR --> [CLI]
+Diagnostics --> [CLI]
+[CLI] --> [JSONL events]
+[CLI] --> SQLite
+[CLI] --> [GitHub Actions\npush/PR differential\nmain/scheduled/manual full]
+package "Future optional server" {
+  [API / MCP adapter]
+  [Workers]
+  database "PostgreSQL" as PG
+  [SSE dashboard]
+  [Object storage]
+  [API / MCP adapter] --> [Workers]
+  [Workers] --> PG
+  [Workers] --> [Object storage]
+  PG --> [SSE dashboard]
+}
+[CLI] ..> [API / MCP adapter] : optional sync
+note bottom of IR
+Semantic meaning is canonical.
+AST, graphs and diagram layouts are derived views.
+end note
+@enduml
