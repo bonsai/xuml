@@ -1,0 +1,14 @@
+id: example.agent-factory
+description: A small example request for the first vertical slice.
+dimensions:
+  domain: ai
+  use_case: workflow
+  granularity: agent
+  layer: orchestration
+  workflow: multi_agent
+  perspective: human
+  diagram_type: flowchart
+  output_format: svg
+  constraints:
+    - local_first
+    - show_unknowns
