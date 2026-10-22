@@ -2,63 +2,43 @@
 
 xuml makes existing and AI-generated code easier to inspect. It extracts source structure into a common semantic intermediate representation (IR), checks implementation against design, and generates reviewable diagrams.
 
-**Status:** design/bootstrap. The core is local-first, and the same diagram-generation engine is intended to be exposed through CLI, MCP, and a versioned HTTP API/server so compatible clients can generate SVG from intent.
+**Status:** design/bootstrap. Local-first core; the same diagram-generation engine is intended to be exposed through CLI, MCP, and a versioned HTTP API/server so compatible clients can generate SVG from intent.
 
-## First vertical slice
-
-1. Parse Python classes, attributes, inheritance, and type annotations.
-2. Convert facts into a shared semantic IR.
-3. Validate structure and emit JSON diagnostics.
-4. Render SVG, Mermaid (`.mmd`), and PlantUML (`.puml`).
-5. Test fixed fixtures, malformed inputs, deterministic output, and failure paths.
-6. Run GitHub Actions on push and pull requests.
-
-Next, add module dependency topology, then call relationships. Mark inferred or unknown targets explicitly.
-
-## Architecture
-
-Source adapters → parser/analyzer → semantic IR → validators → render plugins.
-
-The semantic model is canonical. AST, graph, and layout are derived projections; layout changes must not change model meaning.
+## Start here
 
 - [Documentation portal](docs/index.html)
 - [Architecture diagram (SVG)](docs/diagram/architecture.svg)
 - [Architecture source (Mermaid)](docs/diagram/architecture.mmd)
 - [Architecture source (PlantUML)](docs/diagram/architecture.puml)
-- [ADR-0001](docs/adr/0001-architecture.md)
-- [Intent-to-SVG MCP/API/server design](docs/design/intent-to-svg-server.md)
-- [Grill Me decisions](docs/grilled.yaml)
-- [Implementation Issue #1](https://github.com/bonsai/xuml/issues/1)
-- [Docs and Pages Issue #2](https://github.com/bonsai/xuml/issues/2)
-- [Intent-to-SVG MCP/API/server Issue #3](https://github.com/bonsai/xuml/issues/3)
+- [ADR-0001: local-first hybrid architecture](docs/adr/0001-architecture.md)
 
-## Documentation and diagrams
+## Development is Issue-first
 
-- Human-readable documentation index: `docs/index.html`.
-- Design documents and decision records live under `docs/`.
-- Store all diagram sources and rendered diagrams in `docs/diagram/` (`.puml`, `.mmd`, `.svg`).
-- Pages workflow source: `wf/dep-pages.yml`; GitHub Actions deployment entry point: `.github/workflows/dep-pages.yml`.
+Detailed requirements, design decisions, acceptance criteria, implementation plans, open questions, and verification results belong in GitHub Issues—not duplicated long-form documents under `docs/`.
 
-## Repository policy
+- [Issue #1 — Local-first analysis CLI](https://github.com/bonsai/xuml/issues/1)
+- [Issue #2 — Minimal docs and documentation portal](https://github.com/bonsai/xuml/issues/2)
+- [Issue #3 — Intent-to-SVG MCP/API/server](https://github.com/bonsai/xuml/issues/3)
+- [Issue #4 — Architecture decisions and open questions](https://github.com/bonsai/xuml/issues/4)
 
-- GitHub Issues are the canonical entry point for feature work.
-- Keep source, DSL, YAML, ADRs, and reviewable diagrams in Git.
-- JSON is used for request/response contracts; YAML for configuration/templates; JSONL for append-only event history.
-- Use SQLite locally; PostgreSQL and object storage are later server options.
-- Serious CI errors block merge. Exceptions require reason, approver, expiry, linked Issue, and rule ID.
-- On validation failure, preserve last-known-good generated outputs.
-- Local Git hooks are optional; GitHub Actions is the final quality gate.
+## Architecture in brief
 
-## Intent-to-SVG service direction
+Source adapters → parser/analyzer → semantic IR → validators → render plugins.
 
-The target interface is `diagram_from_intent` over MCP and `POST /v1/diagrams` over HTTP, backed by one shared intent-normalization → typed specification → semantic IR → validation → renderer pipeline. CLI, MCP, and HTTP are adapters over the same core; local/offline use remains supported and remote hosting is optional. See [Issue #3](https://github.com/bonsai/xuml/issues/3).
+The semantic model is canonical. AST, graph, and layout are derived projections; layout changes must not change model meaning. Keep confirmed static facts, inferred relations, runtime observations, and unknowns distinct.
 
-## Implementation phases
+## Repository conventions
 
-- P0: versioned IR, IDs, diagnostics, exit codes, provenance, fixtures.
-- P1: Python structural analysis, validation, SVG/Mermaid/PlantUML.
-- P2: regression tests and push/PR CI.
-- P3: module topology and cycle detection.
-- P4: call analysis and self-verification.
-- P5: DSL and metamodel validation.
-- P6: JSONL/SQLite; optional API, SSE dashboard, PostgreSQL, and object storage.
+- Keep `docs/` limited to the portal, concise overview, stable ADRs, and diagrams.
+- Store diagram source and rendered output together in `docs/diagram/` (`.puml`, `.mmd`, `.svg`).
+- Pages workflow source: `wf/dep-pages.yml`; GitHub Actions entry point: `.github/workflows/dep-pages.yml`.
+- JSON for versioned contracts and IR; YAML for configuration/templates; JSONL for append-only event history.
+- Local SQLite first; PostgreSQL and object storage are optional later server components.
+- Serious CI errors block merge; waivers require a reason, approver, expiry, linked Issue, and rule ID.
+- Failed validation must preserve last-known-good generated outputs.
+
+## First vertical slice
+
+Python class structure → common IR → structural validation → JSON diagnostics → SVG, Mermaid, and PlantUML. Then add module dependency topology and call relationships.
+
+Implementation phases and acceptance criteria are maintained in the linked Issues.
