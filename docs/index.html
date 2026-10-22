@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>xuml — Design and Documentation</title>
+  <meta name="description" content="xuml makes code structure inspectable through a common semantic model, validation, and generated diagrams.">
+  <style>
+    :root { color-scheme: light dark; font-family: system-ui, sans-serif; }
+    body { max-width: 880px; margin: 0 auto; padding: 2rem 1.25rem 4rem; line-height: 1.65; }
+    h1, h2 { line-height: 1.2; } a { overflow-wrap: anywhere; }
+    .lead { font-size: 1.15rem; } .card { border: 1px solid #8886; border-radius: 12px; padding: 1rem 1.25rem; margin: 1rem 0; }
+    code { font-family: ui-monospace, monospace; } li { margin: .35rem 0; }
+  </style>
+</head>
+<body>
+  <header>
+    <p><a href="../README.md">GitHub repository</a></p>
+    <h1>xuml</h1>
+    <p class="lead">Make code inspectable. Turn intent and source structure into a shared semantic model, validated diagnostics, and reviewable diagrams.</p>
+  </header>
+  <section class="card">
+    <h2>Start here</h2>
+    <ul>
+      <li><a href="../README.md">Project overview and implementation phases</a></li>
+      <li><a href="grilled.yaml">Grill Me decisions (YAML)</a></li>
+      <li><a href="adr/0001-architecture.md">ADR-0001: local-first hybrid architecture</a></li>
+      <li><a href="diagram/architecture.svg">Architecture diagram (SVG)</a></li>
+      <li><a href="diagram/architecture.mmd">Architecture source (Mermaid)</a></li>
+      <li><a href="diagram/architecture.puml">Architecture source (PlantUML)</a></li>
+    </ul>
+  </section>
+  <section>
+    <h2>Development issues</h2>
+    <ul>
+      <li><a href="https://github.com/bonsai/xuml/issues/1">#1 — Local-first analysis CLI</a></li>
+      <li><a href="https://github.com/bonsai/xuml/issues/2">#2 — Documentation portal and diagram organization</a></li>
+      <li><a href="https://github.com/bonsai/xuml/issues/3">#3 — Intent-to-SVG MCP/API/server</a></li>
+    </ul>
+  </section>
+  <section>
+    <h2>Design principles</h2>
+    <ul>
+      <li>The semantic IR is canonical; diagram layout is a derived view.</li>
+      <li>Keep confirmed facts, inferences, runtime observations, and unknowns distinct.</li>
+      <li>Use Issues as the canonical development entry point.</li>
+      <li>Keep the first release local-first; remote services remain optional.</li>
+    </ul>
+  </section>
+  <footer><p>Design-first bootstrap. Implementation status is tracked in GitHub Issues.</p></footer>
+</body>
+</html>
