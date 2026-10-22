@@ -1,0 +1,21 @@
+flowchart LR
+  A["Source adapters<br/>Python · xuml DSL · YAML"] --> B["Parse and analyze<br/>AST · types · provenance"]
+  B --> C["Semantic common IR<br/>IDs · relations · confidence"]
+  C --> D["Validators<br/>structure · topology · contracts"]
+  C --> E["Render plugins"]
+  E --> F["SVG"]
+  E --> G["Mermaid"]
+  E --> H["PlantUML"]
+  D --> I["JSON diagnostics<br/>stable exit codes"]
+  F --> J["Artifacts"]
+  G --> J
+  H --> J
+  subgraph Local["Local-first runtime"]
+    K["CLI"]
+    L["JSONL events"]
+    M["SQLite index/cache"]
+  end
+  J --> K
+  K --> N["GitHub Actions<br/>push/PR differential; main/scheduled/manual full"]
+  K -. "optional future sync" .-> O["API / workers / PostgreSQL / SSE"]
+  O -.-> P["Dashboard / object storage"]
