@@ -59,7 +59,7 @@ jobs:
                       edges.add((item["number"], target))
           edges = sorted(edges)
 
-          out = Path("issue-graph")
+          out = Path("artifacts/issue-graph")
           out.mkdir(exist_ok=True)
           (out / "issues.json").write_text(json.dumps({
               "repository": repo,
@@ -126,6 +126,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: issue-graph
-          path: issue-graph/
+          path: artifacts/issue-graph/
           if-no-files-found: error
           retention-days: 14
