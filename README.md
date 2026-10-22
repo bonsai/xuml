@@ -21,10 +21,22 @@ Source adapters → parser/analyzer → semantic IR → validators → render pl
 
 The semantic model is canonical. AST, graph, and layout are derived projections; layout changes must not change model meaning.
 
-- [Architecture diagram](docs/architecture.svg)
+- [Documentation portal](docs/index.html)
+- [Architecture diagram (SVG)](docs/diagram/architecture.svg)
+- [Architecture source (Mermaid)](docs/diagram/architecture.mmd)
+- [Architecture source (PlantUML)](docs/diagram/architecture.puml)
 - [ADR-0001](docs/adr/0001-architecture.md)
-- [Grill Me decisions](grilled.yaml)
+- [Grill Me decisions](docs/grilled.yaml)
 - [Implementation Issue #1](https://github.com/bonsai/xuml/issues/1)
+- [Docs and Pages Issue #2](https://github.com/bonsai/xuml/issues/2)
+- [Intent-to-SVG MCP/API/server Issue #3](https://github.com/bonsai/xuml/issues/3)
+
+## Documentation and diagrams
+
+- Human-readable documentation index: `docs/index.html`.
+- Design documents and decision records live under `docs/`.
+- Store all diagram sources and rendered diagrams in `docs/diagram/` (`.puml`, `.mmd`, `.svg`).
+- Pages workflow source: `wf/dep-pages.yml`; GitHub Actions deployment entry point: `.github/workflows/dep-pages.yml`.
 
 ## Repository policy
 
