@@ -2,7 +2,7 @@
 
 xuml makes existing and AI-generated code easier to inspect. It extracts source structure into a common semantic intermediate representation (IR), checks implementation against design, and generates reviewable diagrams.
 
-**Status:** planning/bootstrap. Initial delivery is a local-first CLI; server infrastructure is not required.
+**Status:** design/bootstrap. The core is local-first, and the same diagram-generation engine is intended to be exposed through CLI, MCP, and a versioned HTTP API/server so compatible clients can generate SVG from intent.
 
 ## First vertical slice
 
@@ -26,6 +26,7 @@ The semantic model is canonical. AST, graph, and layout are derived projections;
 - [Architecture source (Mermaid)](docs/diagram/architecture.mmd)
 - [Architecture source (PlantUML)](docs/diagram/architecture.puml)
 - [ADR-0001](docs/adr/0001-architecture.md)
+- [Intent-to-SVG MCP/API/server design](docs/design/intent-to-svg-server.md)
 - [Grill Me decisions](docs/grilled.yaml)
 - [Implementation Issue #1](https://github.com/bonsai/xuml/issues/1)
 - [Docs and Pages Issue #2](https://github.com/bonsai/xuml/issues/2)
@@ -47,6 +48,10 @@ The semantic model is canonical. AST, graph, and layout are derived projections;
 - Serious CI errors block merge. Exceptions require reason, approver, expiry, linked Issue, and rule ID.
 - On validation failure, preserve last-known-good generated outputs.
 - Local Git hooks are optional; GitHub Actions is the final quality gate.
+
+## Intent-to-SVG service direction
+
+The target interface is `diagram_from_intent` over MCP and `POST /v1/diagrams` over HTTP, backed by one shared intent-normalization → typed specification → semantic IR → validation → renderer pipeline. CLI, MCP, and HTTP are adapters over the same core; local/offline use remains supported and remote hosting is optional. See [Issue #3](https://github.com/bonsai/xuml/issues/3).
 
 ## Implementation phases
 
