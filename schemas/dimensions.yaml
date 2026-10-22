@@ -1,0 +1,32 @@
+version: 1
+dimensions:
+  domain:
+    description: Subject matter or business domain.
+    values: [ai, software, media, game, data, infrastructure]
+  use_case:
+    description: Primary intent of the diagram.
+    values: [overview, explain, workflow, orchestrate, network, deploy, inspect, compare, debug]
+  granularity:
+    description: Requested level of detail.
+    values: [universe, world, domain, system, subsystem, agent, component, interaction, operation, evidence, implementation]
+  layer:
+    description: Architectural or operational layer.
+    values: [experience, application, orchestration, domain, data, network, infrastructure, runtime]
+  network:
+    description: Network or service topology.
+    values: [client_server, peer_to_peer, hub_spoke, mesh]
+  workflow:
+    description: Workflow behavior.
+    values: [sequential, conditional, parallel, multi_agent, human_in_the_loop, event_driven]
+  perspective:
+    description: Reader or observer perspective.
+    values: [human, agent, operator, developer, auditor]
+  diagram_type:
+    description: Requested diagram notation or semantic view.
+    values: [architecture, component, flowchart, sequence, network, state, class, use_case]
+  output_format:
+    description: Requested rendering format.
+    values: [svg, mmd, puml, json]
+  constraints:
+    description: Arbitrary caller-supplied constraints; preserved for downstream policy.
+    values: []
