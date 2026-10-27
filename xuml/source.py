@@ -58,10 +58,11 @@ def _read_limited(response) -> bytes:
     declared = response.headers.get("Content-Length")
     if declared:
         try:
-            if int(declared) > MAX_SOURCE_BYTES:
-                raise SourceError(f"Source exceeds the {MAX_SOURCE_BYTES}-byte limit.")
+            declared_size = int(declared)
         except ValueError:
-            pass
+            declared_size = None
+        if declared_size is not None and declared_size > MAX_SOURCE_BYTES:
+            raise SourceError(f"Source exceeds the {MAX_SOURCE_BYTES}-byte limit.")
     payload = response.read(MAX_SOURCE_BYTES + 1)
     if len(payload) > MAX_SOURCE_BYTES:
         raise SourceError(f"Source exceeds the {MAX_SOURCE_BYTES}-byte limit.")
