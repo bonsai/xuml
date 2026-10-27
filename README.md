@@ -43,3 +43,21 @@ The semantic model is canonical. AST, graph, and layout are derived projections;
 Python class structure → common IR → structural validation → JSON diagnostics → SVG, Mermaid, and PlantUML. Then add module dependency topology and call relationships.
 
 Implementation phases and acceptance criteria are maintained in the linked Issues.
+
+## Selectable engines
+
+Use `-svg` for the built-in xuml AST-to-SVG engine, or `-pyu` to delegate to the optional `py2puml` CLI and write PlantUML.
+
+```powershell
+# Built-in SVG engine
+xuml -svg .\xuml\render.py -o render.svg
+
+# py2puml engine (input must be a local Python package directory)
+python -m pip install py2puml
+xuml -pyu .\mypackage -o class-diagram.puml
+
+# Show engine availability
+xuml --list-engines
+```
+
+The `-pyu` option requires `py2puml` to be installed and available on `PATH`. xuml does not install or bundle the optional backend automatically.
