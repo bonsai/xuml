@@ -106,13 +106,13 @@ class CliTests(unittest.TestCase):
             package = Path(directory) / "samplepkg"
             package.mkdir()
             output = Path(directory) / "diagram.puml"
-            completed = SimpleNamespace(returncode=0, stdout="@startuml\\n@enduml\\n", stderr="")
+            completed = SimpleNamespace(returncode=0, stdout="@startuml\n@enduml\n", stderr="")
             with patch("xuml.cli.shutil.which", return_value="py2puml"), patch(
                 "xuml.cli.subprocess.run", return_value=completed
             ) as run:
                 result = main(["-pyu", str(package), "-o", str(output)])
             self.assertEqual(result, 0)
-            self.assertEqual(output.read_text(encoding="utf-8"), "@startuml\\n@enduml\\n")
+            self.assertEqual(output.read_text(encoding="utf-8"), "@startuml\n@enduml\n")
             self.assertEqual(run.call_args.args[0], ["py2puml", str(package), "samplepkg"])
 
     def test_pyu_missing_engine_is_actionable(self):
