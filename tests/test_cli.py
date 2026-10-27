@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import tempfile
 import unittest
+from unittest.mock import patch, Mock
 from pathlib import Path
 from io import BytesIO
 
@@ -93,6 +94,27 @@ class CliTests(unittest.TestCase):
             result = main(["-svg", str(source), "-o", str(output)])
             self.assertEqual(result, 1)
             self.assertEqual(output.read_text(encoding="utf-8"), "known-good")
+
+    def test_pyu_uses_py2puml_through_uvx(self):
+        with tempfile.TemporaryDirectory() as directory:
+            source = Path(directory) / "sample.py"
+            source.write_text("class Example:\\n    pass\\n", encoding="utf-8")
+            completed = Mock(returncode=0)
+            with patch("xuml.cli.shutil.which", return_value="uvx"), patch(
+                "xuml.cli.subprocess.run", return_value=completed
+            ) as run:
+                result = main(["-pyu", str(source), "-o", str(Path(directory) / "out.puml")])
+            self.assertEqual(result, 0)
+            command = run.call_args.args[0]
+            self.assertEqual(command[:4], ["uvx", "--from", "py2puml", "py2puml"])
+            self.assertIn("--path", command)
+            self.assertIn("--output-file", command)
+
+    def test_pyu_rejects_remote_url(self):
+        with patch("xuml.cli.shutil.which", return_value="uvx"), patch("xuml.cli.subprocess.run") as run:
+            result = main(["-pyu", "https://github.com/owner/repo/blob/main/module.py"])
+        self.assertEqual(result, 1)
+        run.assert_not_called()
 
 
 if __name__ == "__main__":
