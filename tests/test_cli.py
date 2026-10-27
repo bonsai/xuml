@@ -3,14 +3,12 @@ from __future__ import annotations
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import patch
-from urllib.error import HTTPError
 from io import BytesIO
 
 from xuml.analyze import analyze_python
 from xuml.cli import main
 from xuml.render import render_svg, write_svg_atomic
-from xuml.source import SourceError, _github_blob_to_raw, load_source
+from xuml.source import MAX_SOURCE_BYTES, SourceError, _github_blob_to_raw, _read_limited, load_source
 
 
 class SourceTests(unittest.TestCase):
@@ -41,6 +39,13 @@ class SourceTests(unittest.TestCase):
             source = load_source(str(path))
             self.assertEqual(source.name, "sample.py")
             self.assertIn("class Example", source.text)
+
+    def test_remote_retrieval_is_size_limited(self):
+        class Response(BytesIO):
+            headers = {"Content-Length": str(MAX_SOURCE_BYTES + 1)}
+
+        with self.assertRaisesRegex(SourceError, "byte limit"):
+            _read_limited(Response(b"x" * (MAX_SOURCE_BYTES + 1)))
 
 
 class AnalysisAndRenderTests(unittest.TestCase):
