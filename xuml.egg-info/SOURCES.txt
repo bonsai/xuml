@@ -1,0 +1,13 @@
+README.md
+pyproject.toml
+tests/test_cli.py
+xuml/__init__.py
+xuml/analyze.py
+xuml/cli.py
+xuml/render.py
+xuml/source.py
+xuml.egg-info/PKG-INFO
+xuml.egg-info/SOURCES.txt
+xuml.egg-info/dependency_links.txt
+xuml.egg-info/entry_points.txt
+xuml.egg-info/top_level.txt

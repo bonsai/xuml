@@ -5,14 +5,23 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "xuml"
 version = "0.1.0"
-description = "Local-first source structure to semantic IR and SVG"
+description = "Local-first source structure to semantic IR and SVG — monorepo root"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
 dependencies = []
 
-[project.scripts]
-xuml = "xuml.cli:main"
-
 [tool.setuptools.packages.find]
-include = ["xuml*"]
+include = []
+
+# Workspace configuration for monorepo
+[tool.uv.workspace]
+members = [
+    "packages/xuml-core",
+    "packages/xuml-cli",
+    "packages/xuml-plantuml",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["packages/xuml-core/tests"]
+pythonpath = ["packages/xuml-core/src"]

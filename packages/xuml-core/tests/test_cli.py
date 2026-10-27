@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import tempfile
 import unittest
+from unittest.mock import patch
+from types import SimpleNamespace
 from pathlib import Path
 from io import BytesIO
 
@@ -93,6 +95,31 @@ class CliTests(unittest.TestCase):
             result = main(["-svg", str(source), "-o", str(output)])
             self.assertEqual(result, 1)
             self.assertEqual(output.read_text(encoding="utf-8"), "known-good")
+
+    def test_list_engines(self):
+        with patch("xuml.cli.shutil.which", return_value=None):
+            self.assertEqual(main(["--list-engines"]), 0)
+
+    def test_pyu_runs_external_engine_and_writes_puml(self):
+        with tempfile.TemporaryDirectory() as directory:
+            package = Path(directory) / "samplepkg"
+            package.mkdir()
+            output = Path(directory) / "diagram.puml"
+            completed = SimpleNamespace(returncode=0, stdout="@startuml\n@enduml\n", stderr="")
+            with patch("xuml.cli.shutil.which", return_value="py2puml"), patch(
+                "xuml.cli.subprocess.run", return_value=completed
+            ) as run:
+                result = main(["-pyu", str(package), "-o", str(output)])
+            self.assertEqual(result, 0)
+            self.assertEqual(output.read_text(encoding="utf-8"), "@startuml\n@enduml\n")
+            self.assertEqual(run.call_args.args[0], ["py2puml", str(package), "samplepkg"])
+
+    def test_pyu_missing_engine_is_actionable(self):
+        with tempfile.TemporaryDirectory() as directory:
+            package = Path(directory) / "samplepkg"
+            package.mkdir()
+            with patch("xuml.cli.shutil.which", return_value=None):
+                self.assertEqual(main(["-pyu", str(package)]), 1)
 
 
 if __name__ == "__main__":

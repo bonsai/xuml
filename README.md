@@ -4,16 +4,81 @@ xuml makes existing and AI-generated code easier to inspect. It extracts source 
 
 **Status:** design/bootstrap. Local-first core; the same diagram-generation engine is intended to be exposed through CLI, MCP, and a versioned HTTP API/server so compatible clients can generate SVG from intent.
 
-## Start here
+## Monorepo Structure
+
+```
+xuml/
+├── packages/
+│   ├── xuml-core/        # Core semantic IR, analysis, rendering
+│   ├── xuml-cli/         # CLI entry point (xuml command)
+│   └── xuml-plantuml/    # PlantUML rendering integration
+├── .agents/skills/
+│   └── plantuml-jar/     # Skill: offline PlantUML rendering
+├── docs/                 # Documentation portal
+│   ├── index.html
+│   ├── diagram/          # Architecture diagrams
+│   └── design/           # Design proposals
+├── artifacts/            # Generated artifacts (gitignored)
+├── tools/                # Development scripts
+├── pyproject.toml        # Workspace config
+├── README.md
+└── SKILLS.md             # Skills index
+```
+
+## Quick Start
+
+### Install all packages (development)
+
+```bash
+# Using uv (recommended)
+uv sync
+
+# Or with pip
+pip install -e packages/xuml-core
+pip install -e packages/xuml-cli
+pip install -e packages/xuml-plantuml
+```
+
+### Generate SVG from Python source (built-in engine)
+
+```bash
+xuml -svg ./module.py -o module.svg
+```
+
+### Generate PlantUML from Python package (py2puml engine)
+
+```bash
+pip install py2puml
+xuml -pyu ./mypackage -o class-diagram.puml
+```
+
+### Render PlantUML to SVG (offline, using skill)
+
+```bash
+# Using skill script
+bash .agents/skills/plantuml-jar/scripts/render.sh class-diagram.puml -tsvg
+
+# Or from Python
+python -c "from xuml_plantuml import render_puml; render_puml('class-diagram.puml', 'svg')"
+```
+
+### List available engines
+
+```bash
+xuml --list-engines
+```
+
+## Documentation
 
 - [Documentation portal](docs/index.html)
 - [Architecture diagram (SVG)](docs/diagram/architecture.svg)
 - [Architecture source (Mermaid)](docs/diagram/architecture.mmd)
 - [Architecture source (PlantUML)](docs/diagram/architecture.puml)
+- [Skills index](SKILLS.md)
 
-## Issues are canonical
+## Issues are Canonical
 
-All detailed requirements, design decisions, ADRs, acceptance criteria, implementation plans, open questions, and verification results live in GitHub Issues. Do not maintain standalone documentation or ADR files in the repository.
+All detailed requirements, design decisions, ADRs, acceptance criteria, implementation plans, open questions, and verification results live in GitHub Issues.
 
 - [Issue #1 — Local-first analysis CLI](https://github.com/bonsai/xuml/issues/1)
 - [Issue #2 — Minimal docs policy](https://github.com/bonsai/xuml/issues/2)
@@ -21,13 +86,13 @@ All detailed requirements, design decisions, ADRs, acceptance criteria, implemen
 - [Issue #4 — Architecture decisions and open questions](https://github.com/bonsai/xuml/issues/4)
 - [ADR-0001 — Accepted local-first hybrid architecture](https://github.com/bonsai/xuml/issues/5)
 
-## Architecture in brief
+## Architecture in Brief
 
 Source adapters → parser/analyzer → semantic IR → validators → render plugins.
 
 The semantic model is canonical. AST, graph, and layout are derived projections; layout changes must not change model meaning. Keep confirmed static facts, inferred relations, runtime observations, and unknowns distinct.
 
-## Repository policy
+## Repository Policy
 
 - Keep docs limited to index.html and diagrams under docs/diagram/.
 - Keep diagram sources and rendered output together (.puml, .mmd, .svg).
@@ -38,8 +103,12 @@ The semantic model is canonical. AST, graph, and layout are derived projections;
 - Serious CI errors block merge; waivers require a reason, approver, expiry, linked Issue, and rule ID.
 - Failed validation must preserve last-known-good generated outputs.
 
-## First vertical slice
+## Development
 
-Python class structure → common IR → structural validation → JSON diagnostics → SVG, Mermaid, and PlantUML. Then add module dependency topology and call relationships.
+```bash
+# Run tests
+cd packages/xuml-core && pytest
 
-Implementation phases and acceptance criteria are maintained in the linked Issues.
+# Install skill dependencies
+bash .agents/skills/plantuml-jar/scripts/ensure-jar.sh
+```

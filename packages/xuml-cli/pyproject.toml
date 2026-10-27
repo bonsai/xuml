@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "xuml-cli"
+version = "0.1.0"
+description = "CLI entry point for xuml"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = [
+    "xuml-core @ file:///C:/Users/0501JP/xuml/packages/xuml-core",
+]
+
+[project.scripts]
+xuml = "xuml_cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["xuml_cli*"]
