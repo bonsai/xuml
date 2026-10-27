@@ -43,3 +43,25 @@ The semantic model is canonical. AST, graph, and layout are derived projections;
 Python class structure → common IR → structural validation → JSON diagnostics → SVG, Mermaid, and PlantUML. Then add module dependency topology and call relationships.
 
 Implementation phases and acceptance criteria are maintained in the linked Issues.
+
+
+## Choose a diagram engine
+
+Use `-svg` for xuml's native SVG output, or `-pyu` to delegate to
+[py2puml](https://github.com/lucsorel/py2puml) for a PlantUML class diagram.
+The `-pyu` mode runs py2puml via `uvx`, so it does not need to be installed
+into the current Python environment; `uv` must be available on PATH.
+
+```powershell
+# xuml native engine: local Python file or supported GitHub blob URL
+xuml -svg .\xuml\render.py -o render.svg
+
+# py2puml engine: local Python file or package directory
+xuml -pyu .\xuml -o xuml.puml
+
+# default output name is based on the input path
+xuml -pyu .\xuml
+```
+
+`-pyu` accepts local files and package directories. Remote GitHub URLs are not
+supported in this mode because py2puml inspects a local Python project.
