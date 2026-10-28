@@ -1,0 +1,82 @@
+@startuml
+title xuml — 現状アーキテクチャ (as-is, v0.1.0 / design-bootstrap)
+left to right direction
+skinparam componentStyle rectangle
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam defaultTextAlignment center
+
+actor "利用者" as User
+
+package "packages/xuml-cli" {
+  component "xuml_cli.main\n薄いラッパ（委譲のみ）" as CliPkg
+}
+note right of CliPkg
+  entry point: xuml = xuml_cli:main
+  依存指定は file:///C:/Users/0501JP/xuml/...
+  という絶対パス（現状の癖）
+end note
+
+package "packages/xuml-core — 実装の本体（依存ゼロ）" {
+  component "cli.py\nargparse: -svg / -pyu /\n--list-engines / -o" as CoreCli
+  component "source.py\nload_source()\nローカル .py か GitHub blob URL のみ\n(.py限定 / 1MB上限 / 10秒)" as Source
+  component "analyze.py\nanalyze_python()\nast.parse（実行しない）" as Analyze
+  component "Semantic IR v1.0 (dict)\nnodes: module/class/function/\nasync_function\nedges: inherits / imports のみ" as IR
+  component "render.py\nrender_svg() 行リスト形式SVG\n（辺は本数の表示のみ）\nwrite_svg_atomic()" as Render
+  CoreCli --> Source
+  CoreCli --> Analyze
+  CoreCli --> Render
+  Source --> Analyze : Source(text)
+  Analyze --> IR
+  IR --> Render
+}
+
+package "packages/xuml-plantuml" {
+  component "PlantUMLRenderer\nrender_puml()\njava -jar を subprocess 実行" as PumlPkg
+}
+note right of PumlPkg
+  CLIからは未接続（単独ライブラリ）。
+  jarの既定パスは .agents/skills/ の jar。
+  無ければ GitHub Releases から自動DL。
+end note
+
+package "packages/xuml-java" {
+  component "JavaDiagramEngine\nrender_java()" as JavaPkg
+}
+note right of JavaPkg
+  uv workspace の members 外。
+  README・ルートREADMEの構成図にも無い。
+  CLIから未接続の実験的ラッパ。
+end note
+
+folder ".agents/skills/plantuml-jar\nplantuml.jar (30MB, commit済)\nrender.sh / ensure-jar.sh" as Jar
+
+file "Python ソース\nローカル .py / GitHub blob URL" as PySrc
+component "py2puml（外部・任意）\nPATH上にあれば利用" as Py2puml
+file "出力\n.svg / .puml" as Out
+
+User --> CliPkg : xuml コマンド
+CliPkg --> CoreCli : main(argv)
+Source ..> PySrc : 読込 / raw取得
+CoreCli --> Py2puml : -pyu 時 subprocess\n（パッケージdir → .puml）
+PumlPkg --> Jar : java -jar
+JavaPkg ..> Jar : java -jar
+Render --> Out : SVG（atomic書込）
+Py2puml --> Out : PlantUML
+Out ..> PumlPkg : .puml → SVG化は\n手動の次工程
+
+note bottom of IR
+  テスト: packages/xuml-core/tests/test_cli.py
+  unittest 13件（source / analyze / render / cli / pyu）。
+  リポジトリ直下の xuml/ には __pycache__ だけが残る
+  （本体は packages/ へ移動済み）。
+end note
+
+note bottom of Render
+  未実装（設計のみ、docs/diagram/architecture.puml と
+  docs/design/mrd.md 側）: Validators、JSON診断、
+  SQLite / JSONL イベント、MCP / HTTP API サーバ
+  （Issue #3 = Proposed）、ダッシュボード。
+  現状の診断は標準エラー出力＋終了コード 0/1。
+end note
+@enduml
