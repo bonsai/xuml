@@ -1,0 +1,91 @@
+@startuml
+title xuml-core — モジュール / クラス図（実コード準拠）
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+
+class SourceError extends ValueError {
+}
+
+class Source <<dataclass frozen>> {
+  + text : str
+  + name : str
+  + origin : str
+}
+
+class "source" as SourceMod <<module>> {
+  + MAX_SOURCE_BYTES = 1_000_000
+  + FETCH_TIMEOUT_SECONDS = 10
+  + load_source(value : str) : Source
+  - _github_blob_to_raw(url)
+  - _read_limited(response)
+}
+
+class "analyze" as AnalyzeMod <<module>> {
+  + analyze_python(source, source_name, origin) : dict
+}
+note right of AnalyzeMod
+  返す IR (dict):
+  { ir_version: "1.0",
+    source: {name, origin, language},
+    nodes: [{id, kind, name, parent, line}],
+    edges: [{from, to, kind}] }
+  kind: module / class / function / async_function
+  edge kind: inherits / imports のみ
+end note
+
+class "render" as RenderMod <<module>> {
+  + render_svg(ir : dict) : str
+  + write_svg_atomic(output, svg) : Path
+}
+note right of RenderMod
+  依存ゼロの自前SVG生成。
+  幅760固定、ノードを行リスト表示し、
+  辺は "Relations: N" の本数表示のみ
+  （線としては描かない）。
+  atomic書込は失敗時に既存ファイルを残す。
+end note
+
+class "cli" as CliMod <<module>> {
+  + build_parser() : ArgumentParser
+  + main(argv) : int
+  - _run_py2puml(source, output) : int
+  - _default_output(source_name) : Path
+}
+
+class "xuml_cli" as CliPkg <<module>> {
+  + main() : int
+}
+
+class PlantUMLRenderer {
+  + jar_path : Path
+  + java_cmd : str
+  + ensure_jar()
+  + render(input_path, fmt = "svg", output_path) : Path
+  + render_string(puml_content, fmt, output_path) : Path
+}
+class PlantUMLError extends Exception {
+}
+class "xuml_plantuml" as PumlMod <<module>> {
+  + render_puml(input_path, fmt, output_path, jar_path) : Path
+}
+
+class JavaDiagramEngine {
+  + jar_path : str
+  + render(puml_path, fmt = "svg") : str
+}
+note right of JavaDiagramEngine
+  packages/xuml-java。
+  java -jar の標準出力を返す作りだが、
+  PlantUMLはファイル出力が本体のため
+  戻り値は実質空になりやすい（現状の癖）。
+end note
+
+SourceMod ..> Source : 生成
+SourceMod ..> SourceError : raise
+CliMod ..> SourceMod : load_source
+CliMod ..> AnalyzeMod : analyze_python
+CliMod ..> RenderMod : render_svg / write_svg_atomic
+CliPkg ..> CliMod : main に委譲
+PumlMod ..> PlantUMLRenderer : 生成
+PlantUMLRenderer ..> PlantUMLError : raise
+@enduml
